@@ -1,0 +1,59 @@
+	type 1 
+		conn = db.engine.connect()
+	p = Partida.query.get(request.json.get('id'))
+	time_visitante = Time.query.filter_by(id=p.id_visitante).first()
+	time_casa = Time.query.filter_by(id=p.id_casa).first()
+	metodos.refreshComponents(p.estadio,p.data,time_casa,time_visitante)
+
+	
+	
+	type 2
+	sql = text('SELECT estadio, data, gols_casa, gols_visitante FROM patidas WHERE id=:valor')
+	sql1 = text(' SELECT t.nomeTime FROM patidas AS p INNER JOIN times AS t ON (t.id=p.id_visitante) WHERE p.id=:valor')
+	sql2 = text(' SELECT t.nomeTime FROM patidas AS p INNER JOIN times AS t ON (t.id=p.id_casa) WHERE p.id=:valor')
+	result = conn.execute(sql,valor=valor).fetchall()
+	result1 = conn.execute(sql1,valor=valor).fetchall()
+	result2 = conn.execute(sql2,valor=valor).fetchall()
+
+
+def refreshComponents(json):
+    if( contains(1, json) ):
+        return "Partida já existente!"
+    else:
+        newPartida = Partida(
+            estadio = json['estadio']),
+            data = json['data'],  
+            gols_casa = json['gols_casa'],
+            gols_visitante    = json['gols_visitante'],
+            id_visitante    = json['id_visitante'],
+            id_casa    = json['id_casa'],
+                          )
+
+        db.session.add(newPartida)
+        db.session.commit() 
+
+    return "Partida cadastrada!"
+
+"estadio": "Castelão",
+    "data": "2019-05-03 07:00:00",
+    "gols_casa": 0, 
+    "gols_visitante": 0, 
+    "id_casa": 1, 
+    "id_visitante": 2 
+   
+
+
+conn = db.engine.connect()
+	sql = text('SELECT estadio, data, gols_casa, gols_visitante FROM patidas WHERE id=:valor')
+	sql1 = text('SELECT t.nomeTime FROM patidas AS p INNER JOIN times AS t ON (t.id=p.id_visitante) WHERE p.id=:valor')
+	sql2 = text('SELECT t.nomeTime FROM patidas AS p INNER JOIN times AS t ON (t.id=p.id_casa) WHERE p.id=:valor')
+	result = conn.execute(sql,valor=valor).fetchall()
+	result1 = conn.execute(sql1,valor=valor).fetchall()
+	result2 = conn.execute(sql2,valor=valor).fetchall()
+
+	print(result[0]['estadio'])
+	print(result[0]['data'])
+	print(result[0]['gols_casa'])
+	print(result[0]['gols_visitante'])
+	print(result1[0]['nomeTime'])
+	print(result2[0]['nomeTime'])
